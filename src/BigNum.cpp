@@ -4,7 +4,7 @@
 
 #include "BigNum.h"
 
-BigNum::BigNum(): value(""), sign(1) {
+BigNum::BigNum(): _value(""), _sign(1) {
 
 }
 
@@ -12,87 +12,123 @@ BigNum::BigNum(const long long& num): BigNum{std::to_string(num)} {
 
 }
 
-BigNum &BigNum::operator=(const std::string& str) {
+BigNum& BigNum::operator=(const std::string& str) {
     *this = BigNum{str};
     return *this;
 }
 
 BigNum::BigNum(const std::string& num) {
-    int newSign = (num[0] == '-' ? -1 : 1);
-    value = newSign == -1 ? num.substr(1) : num;
-    reverse(value.begin(), value.end());
+    int new_sign = (num[0] == '-') ? -1 : 1;
+    _value = new_sign == -1 ? num.substr(1) : num;
+    reverse(_value.begin(), _value.end());
 
-    this->normalize(newSign);
+    purgeZerosAndSetSign(new_sign);
 }
-
 
 BigNum BigNum::operator+(const BigNum& num) const {
     BigNum curr = *this;
     BigNum other = num;
 
-    if (curr.sign != other.sign)
-        return curr - other.negative();
+    if (curr._sign != other._sign)
+        return curr - other.neg();
 
     BigNum res;
 
-    for (int a = 0, carry = 0; a < value.size() || a < other.value.size() || carry; a++) {
-        carry += (a < curr.value.size() ? curr.value[a] - '0' : 0) + (a < other.value.size() ? other.value[a] - '0' : 0);
+    for (int a = 0, carry = 0; a < _value.size() || a < other._value.size() || carry; a++) {
+        carry += (a < curr._value.size() ? curr._value[a] - '0' : 0) + (a < other._value.size() ? other._value[a] - '0' : 0);
 
-        res.value += (carry % 10 + '0');
+        res._value += (carry % 10 + '0');
 
         carry /= 10;
     }
 
-    return res.normalize(sign);
+    return res.purgeZerosAndSetSign(_sign);
 }
 
 BigNum BigNum::operator-(const BigNum& num) const {
     BigNum curr = *this;
     BigNum other = num;
     
-    if (curr.sign != other.sign)
-        return curr + other.negative();
+    if (curr._sign != other._sign)
+        return curr + other.neg();
 
-    int realSign = curr.sign;
-
-    curr.sign = 1;
+    int real_sign = curr._sign;
+    curr._sign = 1;
 
     if (curr < other)
-        return ((other - curr).negative()).normalize(-realSign);
+        return ((other - curr).neg()).purgeZerosAndSetSign(-real_sign);
 
     BigNum res;
 
-    for (int a = 0, borrow = 0; a < value.size(); a++) {
-        borrow = (curr.value[a] - borrow - (a < other.value.size() ? other.value[a] : '0'));
+    for (int a = 0, carry = 0; a < _value.size(); a++) {
+        carry = (curr._value[a] - carry - (a < other._value.size() ? other._value[a] : '0'));
 
-        res.value += (borrow >= 0 ? borrow + '0' : borrow + '0' + 10);
+        res._value += (carry >= 0 ? carry + '0' : carry + '0' + 10);
 
-        borrow = (borrow >= 0 ? 0 : 1);
+        carry = (carry >= 0 ? 0 : 1);
     }
 
-    return res.normalize(realSign);
+    return res.purgeZerosAndSetSign(real_sign);
 }
 
+BigNum BigNum::operator*(const BigNum& num) const {
+    BigNum res("0");
+    auto other = num;
+
+    for (int a = 0, b = _value[a] - '0'; a < _value.size(); a++, b = _value[a] - '0') {
+        while (b--)
+            res = (res + other);
+
+        other._value.insert(other._value.begin(), '0');
+    }
+
+    return res.purgeZerosAndSetSign(_sign * other._sign);
+}
+
+BigNum BigNum::operator/(const BigNum& num) const {
+    auto other = num;
+
+    if (other.isZero())
+        return *this;
+
+    BigNum temp("0"), res;
+
+    res._value += std::string(_value.size(), '0');
+
+    int new_sign = _sign * other._sign;
+    other._sign = 1;
+
+    for (int i = _value.size() - 1; i >= 0; i--) {
+        temp._value.insert(temp._value.begin(), '0');
+        temp = temp + BigNum{_value.substr(i, 1)};
+
+        while (!(temp < other)) {
+            temp = temp - other;
+            res._value[i]++;
+        }
+    }
+
+    return res.purgeZerosAndSetSign(new_sign);
+}
 
 bool BigNum::operator==(const BigNum& num) const {
-    return (sign == num.sign) and (value == num.value);
+    return (_sign == num._sign) and (_value == num._value);
 }
-
 
 bool BigNum::operator!=(const BigNum& num) const {
     return !(*this == num);
 }
 
 bool BigNum::operator<(const BigNum& other) const {
-    if (sign != other.sign)
-        return sign < other.sign;
+    if (_sign != other._sign)
+        return _sign < other._sign;
 
-    if (value.size() != other.value.size())
-        return (sign == 1 ? value.size() < other.value.size() : value.size() > other.value.size());
+    if (_value.size() != other._value.size())
+        return (_sign == 1 ? _value.size() < other._value.size() : _value.size() > other._value.size());
 
-    for (auto a = value.size() - 1; a >= 0; a--)
-        if (value[a] != other.value[a])
-            return (sign == 1 ? value[a] < other.value[a] : value[a] > other.value[a]);
+    for (auto a = _value.size() - 1; a >= 0; a--)
+        if (_value[a] != other._value[a])
+            return (_sign == 1 ? _value[a] < other._value[a] : _value[a] > other._value[a]);
 
     return false;
 }
@@ -109,65 +145,19 @@ bool BigNum::operator>=(const BigNum& num) const {
     return !(*this < num);
 }
 
-BigNum BigNum::operator*(const BigNum& num) const {
-    BigNum res("0");
-    auto other = num;
-    
-    for (int a = 0, b = value[a] - '0'; a < value.size(); a++, b = value[a] - '0') {
-        while (b--)
-            res = (res + other);
-
-        other.value.insert(other.value.begin(), '0');
-    }
-
-    return res.normalize(sign * other.sign);
-}
-
-
 BigNum BigNum::operator+() const {
     return *this;
 }
 
 BigNum BigNum::operator-() const {
-    BigNum temp;
+    BigNum num;
 
-    temp.value = value;
-    if (value != "0") {
-        if (sign == 1)
-            temp.sign = -1;
-        else
-            temp.sign = 1;
+    num._value = _value;
+    if (!isZero()) {
+        num._sign = _sign == 1 ? -1 : 1;
     }
 
-    return temp;
-}
-
-BigNum BigNum::operator/(const BigNum& num) const {
-    auto other = num;
-
-    if (other.value.size() == 1 && other.value[0] == '0')
-        other.value[0] /= (other.value[0] - '0');
-
-    BigNum temp("0"), res;
-
-    for (int a = 0; a < value.size(); a++)
-        res.value += "0";
-
-    int newSign = sign * other.sign;
-
-    other.sign = 1;
-
-    for (int a = value.size() - 1; a >= 0; a--) {
-        temp.value.insert(temp.value.begin(), '0');
-        temp = temp + BigNum{value.substr(a, 1)};
-
-        while (!(temp < other)) {
-            temp = temp - other;
-            res.value[a]++;
-        }
-    }
-
-    return res.normalize(newSign);
+    return num;
 }
 
 BigNum& BigNum::operator+=(const BigNum& num) {
@@ -175,7 +165,6 @@ BigNum& BigNum::operator+=(const BigNum& num) {
 
     return *this;
 }
-
 
 BigNum& BigNum::operator-=(const BigNum& num) {
     *this = *this - num;
@@ -205,27 +194,44 @@ std::istream& operator>>(std::istream& in, BigNum& num) {
 
 std::ostream& operator<<(std::ostream& out, const BigNum& num) {
     out << num.toString();
+
     return out;
 }
 
-
 std::string BigNum::toString() const {
-    std::string ret = value;
+    std::string ret = _value;
     std::reverse(ret.begin(), ret.end());
 
-    return (sign == -1 ? "-" : "") + ret;
+    return (_sign == -1 ? "-" : "") + ret;
 }
 
-BigNum &BigNum::negative() {
-    sign *= -1;
+BigNum& BigNum::neg() {
+    _sign *= -1;
     return *this;
 }
 
-BigNum &BigNum::normalize(int newSign) {
-    for (auto a = value.size() - 1; a > 0 && value[a] == '0'; a--)
-        value.erase(value.begin() + a);
+BigNum& BigNum::purgeZeros() {
+    if (isZero())
+        return *this;
 
-    sign = (value.size() == 1 && value[0] == '0' ? 1 : newSign);
+    auto first_none_zero_from = std::find_if(_value.crbegin(), _value.crend(), [](char c) {return c != '0'; });
+    auto num_zeros = std::distance(_value.crbegin(), first_none_zero_from);
+
+    _value.erase(_value.size() - num_zeros, num_zeros);
+
     return *this;
+}
 
+bool BigNum::isZero() const {
+    return _value.size() == 1 && _value[0] == '0';
+}
+
+void BigNum::setSign(int sign) {
+    _sign = isZero() ? 1 : sign;
+}
+
+BigNum& BigNum::purgeZerosAndSetSign(int sign) {
+    purgeZeros();
+    setSign(sign);
+    return *this;
 }

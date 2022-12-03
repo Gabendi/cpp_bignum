@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.16)
 project(hf_02)
 
 set(CMAKE_CXX_STANDARD 20)
 
-if(NOT DEFINED CLI11_DIR)
-    set (CLI11_DIR "thirdparty/CLI11" CACHE STRING "CLI11 git repository")
-endif()
+if (NOT DEFINED CLI11_DIR)
+    set(CLI11_DIR "thirdparty/CLI11" CACHE STRING "CLI11 git repository")
+endif ()
 
 include_directories(${CLI11_DIR}/include)
 include_directories(include)

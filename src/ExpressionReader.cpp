@@ -5,6 +5,7 @@
 #include "ExpressionReader.h"
 #include "expression.h"
 
+/// Code extended from one of the labs
 std::shared_ptr<Expression> ExpressionReader::from_istream(std::istream &stream) {
     std::string word;
     std::stack<std::shared_ptr<Expression>> stack;

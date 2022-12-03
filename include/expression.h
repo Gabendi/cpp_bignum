@@ -7,28 +7,24 @@
 
 #include <iostream>
 #include <memory>
-#include "include/BigNum.h"
+#include "BigNum.h"
 
 
-/// Expression source code used from lab 4
-
+/// Expression source code used from lab 4 with minor modifications involved
 
 class Expression {
 public:
-    /* returns value of expression at x */
     virtual BigNum evaluate(BigNum x) const = 0;
 
     Expression() = default;
     Expression(Expression const &) = default;
 
 private:
-    /* outputs expression as string to stream os */
     virtual void print(std::ostream &os) const = 0;
     friend std::ostream & operator<<(std::ostream & os, Expression const &e);
 };
 
 
-/* pass print request to virtual print() method */
 inline std::ostream & operator<<(std::ostream & os, Expression const &e) {
     e.print(os);
     return os;
