@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(hf_02)
+project(bignum)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -10,5 +10,5 @@ endif ()
 include_directories(${CLI11_DIR}/include)
 include_directories(include)
 
-add_executable(hf_02 src/main.cpp src/Program.cpp include/Program.h src/ExpressionReader.cpp include/ExpressionReader.h include/expression.h src/BigNum.cpp include/BigNum.h)
+add_executable(bignum src/main.cpp src/Program.cpp include/Program.h src/ExpressionReader.cpp include/ExpressionReader.h include/expression.h src/BigNum.cpp include/BigNum.h)
 
