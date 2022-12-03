@@ -40,10 +40,6 @@ or alternatively  you can read from a file e.g.: the file in the example
 
     docker run --rm -v ~/cpp_bignum/example:/home -it cpp_bignum:latest bignum -f --input /home/example.txt
 
-## Delete a file
-
-You can delete the current file by clicking the **Remove** button in the file explorer. The file will be moved into the **Trash** folder and automatically deleted after 7 days of inactivity.
-
 # Parameters
 
  - -c: Read from console.
