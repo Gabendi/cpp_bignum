@@ -33,7 +33,6 @@ int Program::parse_args(int argc, const char* argv[]) {
     app.add_flag("-c,--from-console", _from_console, "Read from console.");
     app.add_flag("-f,--from-file", _from_file, "Read from file. Requires --input <input> option.");
     app.add_option("-i,--input", _input_path, "File path to input text file.");
-    app.add_option("-o,--output", _output_path, "File path to output text file.");
 
     CLI11_PARSE(app, argc, argv);
     return 0;
