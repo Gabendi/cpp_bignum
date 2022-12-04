@@ -1,6 +1,7 @@
 # **BigNum for c++**
 
 This is the second homework assignment for C++11 Programming lectures at BME.
+The expressions can be given using [Reverse Polish Notation](https://en.wikipedia.org/wiki/Reverse_Polish_notation).
 
 # Installation
 
