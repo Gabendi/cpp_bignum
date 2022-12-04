@@ -13,7 +13,7 @@ Run the following commands:
     mkdir thirdparty && cd thirdparty &&\
     git clone https://github.com/CLIUtils/CLI11.git && cd .. &&\
     mkdir build && cmake -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S . -B ./build &&\
-    cd build && cmake --build . --target hf_02 -j 6
+    cd build && cmake --build . --target bignum -j 6
 
 ## Using docker
 
