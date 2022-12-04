@@ -31,9 +31,6 @@ or read from file by
 
     ./bignum -f --input ../example/example.txt
 
-## Important note
-The program accepts inputs line-by-line to have a more readable way of using huge numbers. The program evaluates the given expression after the first empty line.
-
 ## Using docker
 Just simply start the program in console by running the following command:
 
@@ -49,6 +46,9 @@ or alternatively  you can read from a file e.g.: the file in the example
  - -f: Read from file. Requires --input <input_path> option provided.
  - -i, --input: File path to input txt file.
  - --help: Invoke for more instructions.
+ 
+ ## Important note
+The program accepts inputs line-by-line to have a more readable way of using huge numbers. The program evaluates the given expression after the first empty line.
  
  ## Example input
  
