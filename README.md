@@ -30,6 +30,8 @@ or read from file by
 
     ./bignum -f --input ../example/example.txt
 
+## Important note
+The program accepts inputs line-by-line to have a more readable way of using huge numbers. The program evaluates the given expression after the first empty line.
 
 ## Using docker
 Just simply start the program in console by running the following command:
