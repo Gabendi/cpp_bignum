@@ -91,7 +91,7 @@ BigNum BigNum::operator/(const BigNum& num) const {
     if (other.isZero())
         return *this;
 
-    BigNum temp("0"), res;
+    BigNum temp{"0"}, res;
 
     res._value += std::string(_value.size(), '0');
 
@@ -126,7 +126,8 @@ bool BigNum::operator<(const BigNum& other) const {
     if (_value.size() != other._value.size())
         return (_sign == 1 ? _value.size() < other._value.size() : _value.size() > other._value.size());
 
-    for (auto a = _value.size() - 1; a >= 0; a--)
+
+    for (int a = _value.size() - 1; a >= 0; a--)
         if (_value[a] != other._value[a])
             return (_sign == 1 ? _value[a] < other._value[a] : _value[a] > other._value[a]);
 

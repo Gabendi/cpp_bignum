@@ -16,7 +16,6 @@
 class Program {
 private:
     std::string _input_path;
-    std::string _output_path = "output.txt";
 
     int _from_console;
     int _from_file;

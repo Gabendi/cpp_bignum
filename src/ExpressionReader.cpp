@@ -48,10 +48,6 @@ std::shared_ptr<Expression> ExpressionReader::from_istream(std::istream &stream)
             stack.pop();
             stack.push(product);
         }
-        else if (word == "x") {
-            std::shared_ptr<Expression> variable{new Variable{}};
-            stack.push(variable);
-        }
         else {
             std::shared_ptr<Expression> constant{new Constant{word}};
             stack.push(constant);

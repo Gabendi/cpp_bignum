@@ -22,7 +22,7 @@ void Program::run(int argc, const char* argv[]) {
         expression = ExpressionReader::from_istream(ifile);
     }
 
-    std::cout << expression->evaluate(BigNum{0}) << std::endl;
+    std::cout <<  expression->evaluate() << std::endl;
 }
 
 int Program::parse_args(int argc, const char* argv[]) {
@@ -57,18 +57,9 @@ bool Program::validate_args() {
         return false;
     }
 
-    if (_output_path.empty()) {
-        std::cout << "Warning: No output path was provided. Defaulting to output.txt" << std::endl;
-    }
-
     if (_input_path.find("txt") == std::string::npos) {
         std::cout << "Error: Input path is not a txt file. Exiting." << std::endl;
         return false;
-    }
-
-    if (_output_path.find("txt") == std::string::npos) {
-        std::cout << "Warning: Output path is not a txt file. Defaulting to output.txt" << std::endl;
-        _output_path = "output.txt";
     }
 
     return true;
