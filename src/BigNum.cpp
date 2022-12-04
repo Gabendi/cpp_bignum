@@ -72,7 +72,7 @@ BigNum BigNum::operator-(const BigNum& num) const {
 }
 
 BigNum BigNum::operator*(const BigNum& num) const {
-    BigNum res("0");
+    BigNum res{"0"};
     auto other = num;
 
     for (int a = 0, b = _value[a] - '0'; a < _value.size(); a++, b = _value[a] - '0') {
