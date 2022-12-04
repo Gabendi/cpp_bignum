@@ -79,7 +79,7 @@ BigNum BigNum::operator*(const BigNum& num) const {
         while (b--)
             res = (res + other);
 
-        other._value.insert(other._value.begin(), '0');
+        other.insertZero();
     }
 
     return res.purgeZerosAndSetSign(_sign * other._sign);
@@ -99,7 +99,7 @@ BigNum BigNum::operator/(const BigNum& num) const {
     other._sign = 1;
 
     for (int i = _value.size() - 1; i >= 0; i--) {
-        temp._value.insert(temp._value.begin(), '0');
+        temp.insertZero();
         temp = temp + BigNum{_value.substr(i, 1)};
 
         while (!(temp < other)) {
@@ -234,5 +234,10 @@ void BigNum::setSign(int sign) {
 BigNum& BigNum::purgeZerosAndSetSign(int sign) {
     purgeZeros();
     setSign(sign);
+    return *this;
+}
+
+BigNum& BigNum::insertZero() {
+    _value.insert(_value.begin(), '0');
     return *this;
 }

@@ -52,6 +52,7 @@ public:
     void setSign(int);
 
     BigNum& neg();
+    BigNum& insertZero();
     BigNum& purgeZeros();
     BigNum& purgeZerosAndSetSign(int);
     bool isZero() const;
